@@ -4,6 +4,6 @@ checkpoint
 codes
 labels
 lenet.*
-tensorflow_vgg
 traffic-signs-data
 *.zip
+vgg16.npy
