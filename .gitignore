@@ -7,3 +7,4 @@ lenet.*
 traffic-signs-data
 *.zip
 vgg16.npy
+tensorflow_vgg/__pycache__/
