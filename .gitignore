@@ -1,3 +1,4 @@
+sign-classifier.*
 .ipynb_checkpoints
 checkpoints
 checkpoint
@@ -8,3 +9,4 @@ traffic-signs-data
 *.zip
 vgg16.npy
 tensorflow_vgg/__pycache__/
+tflearn_classifier.*
