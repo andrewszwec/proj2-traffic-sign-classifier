@@ -13,14 +13,26 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[image1]: ./class_hist.png "Histagram of Road Sign Classes"
+[image2]: ./straight_ahead.png "straight"
+[image3]: ./30_sign.png "30_sign.png"
+[image4]: ./roadwork2.jpg         "Traffic Sign 1"
+[image5]: ./Do-Not-Enter.jpg      "Traffic Sign 2"
+[image6]: ./general_caution.jpg   "Traffic Sign 3"
+[image7]: ./50_sign.jpg           "Traffic Sign 4"
+[image8]: ./right_of_way.jpg      "Traffic Sign 5"
+[image9]: ./road-work.jpg         "Traffic Sign 6"
+[image10]: ./turn-right.jpg       "Traffic Sign 7"
+[image11]: ./turnright_probabilities.png      "test"
+[image12]: ./roadwork1_probabilities.png      "test"
+[image13]: ./rightofway_probabilities.png     "test"
+[image14]: ./50sign_probabilities.png         "test"
+[image15]: ./general_caution_probabilities.png       "test"
+[image16]: ./donotenter_probabilities.png       "test"
+[image17]: ./roadwork2_probabilities.png       "test"
+
+[image18]: ./conv1.png       "test"
+[image19]: ./conv2.png       "test"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -39,11 +51,11 @@ You're reading it! and here is a link to my [project code](https://github.com/ki
 I used the pandas library to calculate summary statistics of the traffic
 signs data set:
 
-* The size of training set is ?
+* Number of training examples = 34799
 * The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+* Number of testing examples = 12630
+* Image data shape = (32, 32)
+* Number of classes = 43
 
 ####2. Include an exploratory visualization of the dataset.
 
@@ -51,27 +63,23 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 
 ![alt text][image1]
 
+![alt text][image2]
+
+![alt text][image3]
+
 ###Design and Test a Model Architecture
 
 ####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-As a first step, I decided to convert the images to grayscale because ...
+* The data was shuffled to prevent the order of the images affecting the model
+* The data was normalised to help the model converge
+* Images were augmented with random changes including:
+	* Flipping left and right
+	* Random rotation
+	* Random blur
 
-Here is an example of a traffic sign image before and after grayscaling.
+The augmentation of the images helped the model generalise over the test set as the model was able to train on a larger variety of images than what was gathered in the training set.
 
-![alt text][image2]
-
-As a last step, I normalized the image data because ...
-
-I decided to generate additional data because ... 
-
-To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
-
-![alt text][image3]
-
-The difference between the original data set and the augmented data set is the following ... 
 
 
 ####2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
@@ -81,20 +89,36 @@ My final model consisted of the following layers:
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 28x28x6 |
+| RELU					|					|
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6, padding valid |
+| Dropout					|		Dropout rate 0.2 |
+| Convolution 5x5	| 1x1 stride, valid padding, outputs 10x10x16 |
+| RELU					|						|
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6, padding valid |
+| Dropout				|		Dropout rate 0.2 |
+| Flatten  			| Flatten conv layer to 400 fully connected layer |
+| Fully connected	| 400 nodes    		|
+| RELU 				|			 |
+| Dropout				|		Dropout rate 0.2 |
+| Fully connected	| 120 nodes    		|
+| RELU 				|			 |
+| Dropout				|		Dropout rate 0.2 |
+| Fully connected	| 84 nodes    		|
+| Fully connected	| 43 nodes    		|
+| Softmax				| 						|
+
 
 
 ####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-To train the model, I used an ....
+To train the model, I used an Adam optimiser.
+      
+* EPOCHS = 30  
+* BATCH_SIZE = 256  
+* dropout = 0.2  
+* num_classes = 43  
+* Learning rate = 0.001  
 
 ####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
@@ -120,12 +144,14 @@ If a well known architecture was chosen:
 
 ####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are five German traffic signs that I found on the web:
+Here are 7 German traffic signs that I found on the web:
 
 ![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][image7] ![alt text][image8] ![alt text][image9] ![alt text][image10]
 
-The first image might be difficult to classify because ...
+The third and seventh image might be difficult to classify because they contain a water mark which may interfere with the feature detection. The other images should be easily identified as they are similar to training images.
+
+
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
@@ -140,7 +166,10 @@ Here are the results of the prediction:
 | Slippery Road			| Slippery Road      							|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The algorithm correctly identified 57.14% of new images. This is poor compared to the test set accuracy of 90.60%
+
+
+
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
@@ -156,10 +185,20 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 | .04	      			| Bumpy Road					 				|
 | .01				    | Slippery Road      							|
 
+![alt text][image11]
+![alt text][image12]
+![alt text][image13]
+![alt text][image14]
+![alt text][image15]
+![alt text][image16]
+![alt text][image17]
 
 For the second image ... 
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 ####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
 
+![alt text][image18]
 
+Somethiung something  
+![alt text][image19]
